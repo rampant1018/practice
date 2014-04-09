@@ -62,21 +62,13 @@ DListNode *dlist_find(DList *list, void *data, DListDataCompare cmp)
     return list->last;
 }
 
-void dlist_display(DList *list, DListDataPrint printer)
+void dlist_foreach(DList *list, DListVisitFunc visit, void *ctx)
 {
     DListNode *node;
 
     for(node = list->first; node != NULL; node = node->next) {
-        printer(node->data);
-        printf(" ");
+        visit(node->data, ctx);
     }
-    printf("\n");
-
-    for(node = list->last; node != NULL; node = node->prev) {
-        printer(node->data);
-        printf(" ");
-    }
-    printf("\n");
 }
 
 void dlist_destory(DList *list)
