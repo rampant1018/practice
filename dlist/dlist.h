@@ -5,14 +5,20 @@
 extern "C" {
 #endif
 
+struct _DList;
+typedef struct _DList DList;
+
 struct _DListNode;
 typedef struct _DListNode DListNode;
 
-void dlist_create(int value);
-void dlist_append(DListNode *thiz, int value);
-DListNode *dlist_find(int value);
-void dlist_display();
-void dlist_destory();
+typedef int (*DListDataCompare)(void *val1, void *val2);
+typedef void (*DListDataPrint)(void *data);
+
+DList *dlist_create();
+void dlist_append(DList *list, DListNode *thiz, void *data);
+DListNode *dlist_find(DList *list, void *data, DListDataCompare cmp);
+void dlist_display(DList *list, DListDataPrint printer);
+void dlist_destory(DList *list);
 
 #ifdef __cplusplus
 extern }

@@ -3,39 +3,45 @@
 
 #include "dlist.h"
 
+struct _DList {
+    DListNode *first;
+    DListNode *last;
+};
+
 struct _DListNode {
     struct _DListNode *prev;
     struct _DListNode *next;
-    int value;
+    void *data;
 };
 
-DListNode *first = NULL, *last = NULL;
-
-void dlist_create(int value)
+DList *dlist_create(void *data)
 {
+    DList *list;
     DListNode *node;
 
+    list = (DList *)malloc(sizeof(DList));
     node = (DListNode *)malloc(sizeof(DListNode));
 
-    node->value = value;
-    node->next = NULL;
-    node->prev = NULL;
+    node->next = node->prev = NULL;
+    node->data = data;
 
-    first = last = node;
+    list->first = list->last = node;
+
+    return list;
 }
 
-void dlist_append(DListNode *thiz, int value)
+void dlist_append(DList *list, DListNode *thiz, void *data)
 {
     DListNode *node;
 
     node = (DListNode *)malloc(sizeof(DListNode));
 
-    node->value = value;
+    node->data = data;
     node->next = thiz->next;
     node->prev = thiz;
 
-    if(thiz == last) {
-        last = node;
+    if(thiz == list->last) {
+        list->last = node;
     }
     else {
         thiz->next->prev = node;
@@ -43,40 +49,42 @@ void dlist_append(DListNode *thiz, int value)
     thiz->next = node;
 }
 
-DListNode *dlist_find(int value)
+DListNode *dlist_find(DList *list, void *data, DListDataCompare cmp)
 {
     DListNode *node;
 
-    for(node = first; node != NULL; node = node->next) {
-        if(node->value == value) {
+    for(node = list->first; node != NULL; node = node->next) {
+        if(!cmp(data, node->data)) {
             return node;
         }
     }
 
-    return last;
+    return list->last;
 }
 
-void dlist_display()
+void dlist_display(DList *list, DListDataPrint printer)
 {
     DListNode *node;
 
-    for(node = first; node != NULL; node = node->next) {
-        printf("%d ", node->value);
+    for(node = list->first; node != NULL; node = node->next) {
+        printer(node->data);
+        printf(" ");
     }
     printf("\n");
 
-    for(node = last; node != NULL; node = node->prev) {
-        printf("%d ", node->value);
+    for(node = list->last; node != NULL; node = node->prev) {
+        printer(node->data);
+        printf(" ");
     }
     printf("\n");
 }
 
-void dlist_destory()
+void dlist_destory(DList *list)
 {
     DListNode *node, *node_tmp;
 
-    for(node = first->next; node != NULL; node = node->next) {
+    for(node = list->first->next; node != NULL; node = node->next) {
         free(node->prev);
     }
-    free(last);
+    free(list->last);
 }
