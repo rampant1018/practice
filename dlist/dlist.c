@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct node_t {
-    struct node_t *prev;
-    struct node_t *next;
+#include "dlist.h"
+
+struct _DListNode {
+    struct _DListNode *prev;
+    struct _DListNode *next;
     int value;
-} DListNode;
+};
 
 DListNode *first = NULL, *last = NULL;
 
@@ -77,23 +79,4 @@ void dlist_destory()
         free(node->prev);
     }
     free(last);
-}
-
-int main()
-{
-    DListNode *node;
-
-    dlist_create(5);
-
-    node = dlist_find(1);
-    dlist_append(node, 3);
-    dlist_append(node, 4);
-    node = dlist_find(4);
-    dlist_append(node, 2);
-    dlist_append(node, 1);
-    dlist_display();
-
-    dlist_destory();
-
-    return 0;
 }
